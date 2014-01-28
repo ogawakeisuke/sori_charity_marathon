@@ -7,11 +7,13 @@
   <body>
 
 <script>
-  (function() {
 
-    function mapInit() {
-  
-      var currentLatlng = new google.maps.LatLng(35.29084423436667,139.68065071105957);
+    function mapInit(viewCount) {
+      var sorimachiDist = parseInt(viewCount) * 20
+      var sorimachiLat = sorimachiDist * 0.00027778 * 0.03225806451
+      console.log(sorimachiLat)
+      var originLatlng = new google.maps.LatLng(35.682952, 139.686854);
+      var currentLatlng = new google.maps.LatLng(35.682952+sorimachiLat, 139.686854);
       
       var opts = {
         zoom : 8,
@@ -39,7 +41,7 @@
 
       // 開始地点と終了地点、ルーティングの種類の設定 
       var request = { 
-          origin: "東京駅", 
+          origin: originLatlng, 
           destination: currentLatlng, 
           travelMode: google.maps.DirectionsTravelMode.WALKING 
       }; 
@@ -55,25 +57,22 @@
       }); 
     }
 
-    var api = "https://www.googleapis.com/youtube/v3/videos?part=statistics&id=RXnI0WexKGk&fields=items%2Fstatistics&key=AIzaSyCXvoL9JXflXgrF-MN5mXSznIVV2b566EY"
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', api, true);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4 && xhr.status === 200){
-        var viewCount = JSON.parse(xhr.responseText).items[0].statistics.viewCount
-      }
-      if (xhr.readyState === 4 && xhr.status === 0){
-      }
-
-      
-    };
-    xhr.send(null);
-
-    $(window).load(function(){
-      mapInit()
-    });
-  })()  
+    
+    
+      var api = "https://www.googleapis.com/youtube/v3/videos?part=statistics&id=RXnI0WexKGk&fields=items%2Fstatistics&key=AIzaSyCXvoL9JXflXgrF-MN5mXSznIVV2b566EY"
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', api, true);
+      xhr.onreadystatechange = function() {
+        
+        if (xhr.readyState === 4 && xhr.status === 200){
+          var viewCount = JSON.parse(xhr.responseText).items[0].statistics.viewCount
+          mapInit(viewCount)
+        }
+        if (xhr.readyState === 4 && xhr.status === 0){
+        }
+      };
+      xhr.send(null);
+    
 </script>
 
   <div id="map" style="width:800px; height:500px"></div>
